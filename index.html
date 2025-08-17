@@ -4,405 +4,398 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>📦 Lista de Inventario Diario</title>
-    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #e3f2fd 0%, #e8f5e8 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-center;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: #1565c0;
+            margin: 0;
+            font-size: 2.5em;
+        }
+        .header p {
+            color: #666;
+            margin: 10px 0 0 0;
+        }
+        .day-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+        .day-btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            background: #f5f5f5;
+            color: #333;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .day-btn.active {
+            background: #1976d2;
+            color: white;
+            transform: scale(1.05);
+        }
+        .day-btn:hover {
+            background: #e3f2fd;
+        }
+        .day-btn.active:hover {
+            background: #1565c0;
+        }
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .summary-card {
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .summary-card.bebidas {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+        .summary-card.galletas {
+            background: #fff3e0;
+            color: #ef6c00;
+        }
+        .summary-card.total {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+        .summary-card h3 {
+            margin: 0 0 10px 0;
+            font-size: 1.1em;
+        }
+        .summary-card .number {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin: 0;
+        }
+        .lists {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        @media (max-width: 768px) {
+            .lists {
+                grid-template-columns: 1fr;
+            }
+        }
+        .list-section {
+            background: #f9f9f9;
+            padding: 25px;
+            border-radius: 12px;
+        }
+        .list-section h2 {
+            margin: 0 0 20px 0;
+            color: #333;
+            font-size: 1.4em;
+        }
+        .product-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 10px;
+            background: white;
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .product-item:hover {
+            border-color: #1976d2;
+        }
+        .product-item.checked {
+            background: #e8f5e8;
+            border-color: #4caf50;
+        }
+        .product-item.checked .product-name {
+            text-decoration: line-through;
+            color: #666;
+        }
+        .product-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .checkbox {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #ccc;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            transition: all 0.3s;
+        }
+        .product-item.checked .checkbox {
+            background: #4caf50;
+            border-color: #4caf50;
+            color: white;
+        }
+        .product-name {
+            font-weight: 500;
+            color: #333;
+        }
+        .product-quantity {
+            background: #1976d2;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        .product-item.checked .product-quantity {
+            background: #4caf50;
+        }
+        .reset-btn {
+            display: block;
+            margin: 30px auto 0;
+            padding: 15px 30px;
+            background: #f44336;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .reset-btn:hover {
+            background: #d32f2f;
+        }
+        .tip {
+            text-align: center;
+            margin-top: 20px;
+            padding: 15px;
+            background: #f0f0f0;
+            border-radius: 8px;
+            color: #666;
+        }
+    </style>
 </head>
 <body>
-    <div id="root"></div>
+    <div class="container">
+        <div class="header">
+            <h1>📦 Lista de Inventario Diario</h1>
+            <p>¿Qué debo llevar hoy?</p>
+        </div>
 
-    <script type="text/babel">
-        const { useState } = React;
-        const { Check, Package, Calendar, Coffee, Cookie } = lucide;
+        <div class="day-buttons">
+            <button class="day-btn active" onclick="changeDay('Lunes')">📅 Lunes</button>
+            <button class="day-btn" onclick="changeDay('Martes')">📅 Martes</button>
+            <button class="day-btn" onclick="changeDay('Miércoles')">📅 Miércoles</button>
+            <button class="day-btn" onclick="changeDay('Jueves')">📅 Jueves</button>
+            <button class="day-btn" onclick="changeDay('Viernes')">📅 Viernes</button>
+        </div>
 
-        const InventoryChecklist = () => {
-            const [selectedDay, setSelectedDay] = useState('Lunes');
-            const [checkedItems, setCheckedItems] = useState({});
+        <div class="summary">
+            <div class="summary-card bebidas">
+                <h3>🥤 Bebidas</h3>
+                <p class="number" id="totalBebidas">10</p>
+            </div>
+            <div class="summary-card galletas">
+                <h3>🍪 Galletas</h3>
+                <p class="number" id="totalGalletas">18</p>
+            </div>
+            <div class="summary-card total">
+                <h3>📦 Total</h3>
+                <p class="number" id="totalProductos">28</p>
+            </div>
+        </div>
 
-            const inventoryData = {
-                'Lunes': {
-                    bebidas: [
-                        { nombre: 'Fuze Tea', cantidad: 5 },
-                        { nombre: 'Arizona Kiwi', cantidad: 1 },
-                        { nombre: 'Arizona Mango', cantidad: 1 },
-                        { nombre: 'Arizona Sandía', cantidad: 3 }
-                    ],
-                    galletas: [
-                        { nombre: 'Cremax', cantidad: 5 },
-                        { nombre: 'Oreo', cantidad: 6 },
-                        { nombre: 'Príncipe', cantidad: 4 },
-                        { nombre: 'Chokis', cantidad: 3 }
-                    ]
-                },
-                'Martes': {
-                    bebidas: [
-                        { nombre: 'Fuze Tea', cantidad: 5 },
-                        { nombre: 'Arizona Kiwi', cantidad: 1 },
-                        { nombre: 'Arizona Mango', cantidad: 1 },
-                        { nombre: 'Arizona Sandía', cantidad: 3 }
-                    ],
-                    galletas: [
-                        { nombre: 'Cremax', cantidad: 5 },
-                        { nombre: 'Oreo', cantidad: 6 },
-                        { nombre: 'Príncipe', cantidad: 4 },
-                        { nombre: 'Chokis', cantidad: 3 }
-                    ]
-                },
-                'Miércoles': {
-                    bebidas: [
-                        { nombre: 'Fuze Tea', cantidad: 5 },
-                        { nombre: 'Arizona Kiwi', cantidad: 1 },
-                        { nombre: 'Arizona Mango', cantidad: 1 },
-                        { nombre: 'Arizona Sandía', cantidad: 2 }
-                    ],
-                    galletas: [
-                        { nombre: 'Cremax', cantidad: 5 },
-                        { nombre: 'Oreo', cantidad: 6 },
-                        { nombre: 'Príncipe', cantidad: 3 },
-                        { nombre: 'Chokis', cantidad: 2 }
-                    ]
-                },
-                'Jueves': {
-                    bebidas: [
-                        { nombre: 'Fuze Tea', cantidad: 5 },
-                        { nombre: 'Arizona Kiwi', cantidad: 1 },
-                        { nombre: 'Arizona Mango', cantidad: 2 },
-                        { nombre: 'Arizona Sandía', cantidad: 2 }
-                    ],
-                    galletas: [
-                        { nombre: 'Cremax', cantidad: 4 },
-                        { nombre: 'Oreo', cantidad: 6 },
-                        { nombre: 'Príncipe', cantidad: 3 },
-                        { nombre: 'Chokis', cantidad: 3 }
-                    ]
-                },
-                'Viernes': {
-                    bebidas: [
-                        { nombre: 'Fuze Tea', cantidad: 4 },
-                        { nombre: 'Arizona Kiwi', cantidad: 2 },
-                        { nombre: 'Arizona Mango', cantidad: 1 },
-                        { nombre: 'Arizona Sandía', cantidad: 2 }
-                    ],
-                    galletas: [
-                        { nombre: 'Cremax', cantidad: 5 },
-                        { nombre: 'Oreo', cantidad: 6 },
-                        { nombre: 'Príncipe', cantidad: 4 },
-                        { nombre: 'Chokis', cantidad: 3 }
-                    ]
-                }
-            };
+        <div class="lists">
+            <div class="list-section">
+                <h2>🥤 Bebidas</h2>
+                <div id="bebidasList"></div>
+            </div>
+            <div class="list-section">
+                <h2>🍪 Galletas</h2>
+                <div id="galletasList"></div>
+            </div>
+        </div>
 
-            const handleCheck = (item) => {
-                const key = `${selectedDay}-${item}`;
-                setCheckedItems(prev => ({
-                    ...prev,
-                    [key]: !prev[key]
-                }));
-            };
+        <button class="reset-btn" onclick="resetChecklist()">🔄 Resetear Lista</button>
 
-            const isChecked = (item) => {
-                const key = `${selectedDay}-${item}`;
-                return checkedItems[key] || false;
-            };
+        <div class="tip">
+            <p><strong>💡 Consejo:</strong> Marca cada producto conforme lo vayas empacando</p>
+            <p>Así no se te olvidará nada antes de salir</p>
+        </div>
+    </div>
 
-            const resetChecklist = () => {
-                setCheckedItems({});
-            };
-
-            const currentData = inventoryData[selectedDay];
-            const totalBebidas = currentData.bebidas.reduce((sum, item) => sum + item.cantidad, 0);
-            const totalGalletas = currentData.galletas.reduce((sum, item) => sum + item.cantidad, 0);
-            const totalProductos = totalBebidas + totalGalletas;
-
-            return React.createElement('div', {
-                className: "max-w-4xl mx-auto p-6 bg-gradient-to-br from-blue-50 to-green-50 rounded-xl shadow-lg min-h-screen"
-            }, [
-                // Header
-                React.createElement('div', {
-                    key: 'header',
-                    className: "text-center mb-6"
-                }, [
-                    React.createElement(Package, {
-                        key: 'icon',
-                        className: "mx-auto mb-3 text-blue-600",
-                        size: 48
-                    }),
-                    React.createElement('h1', {
-                        key: 'title',
-                        className: "text-3xl font-bold text-gray-800 mb-2"
-                    }, "📦 Lista de Inventario Diario"),
-                    React.createElement('p', {
-                        key: 'subtitle',
-                        className: "text-gray-600"
-                    }, "¿Qué debo llevar hoy?")
-                ]),
-
-                // Day selector
-                React.createElement('div', {
-                    key: 'selector',
-                    className: "mb-6"
-                }, 
-                    React.createElement('div', {
-                        className: "flex flex-wrap justify-center gap-2"
-                    }, 
-                        Object.keys(inventoryData).map((dia) =>
-                            React.createElement('button', {
-                                key: dia,
-                                onClick: () => setSelectedDay(dia),
-                                className: `px-4 py-2 rounded-lg font-medium transition-all duration-200 flex items-center gap-2 ${
-                                    selectedDay === dia
-                                        ? 'bg-blue-500 text-white shadow-lg transform scale-105'
-                                        : 'bg-white text-gray-700 hover:bg-blue-100 shadow-md'
-                                }`
-                            }, [
-                                React.createElement(Calendar, { key: 'cal', size: 16 }),
-                                dia
-                            ])
-                        )
-                    )
-                ),
-
-                // Summary
-                React.createElement('div', {
-                    key: 'summary',
-                    className: "grid grid-cols-1 md:grid-cols-3 gap-4 mb-6"
-                }, [
-                    React.createElement('div', {
-                        key: 'bebidas-sum',
-                        className: "bg-blue-100 p-4 rounded-lg text-center"
-                    }, [
-                        React.createElement(Coffee, {
-                            key: 'coffee-icon',
-                            className: "mx-auto mb-2 text-blue-600",
-                            size: 24
-                        }),
-                        React.createElement('h3', {
-                            key: 'bebidas-title',
-                            className: "font-semibold text-blue-800"
-                        }, "Bebidas"),
-                        React.createElement('p', {
-                            key: 'bebidas-count',
-                            className: "text-2xl font-bold text-blue-600"
-                        }, totalBebidas)
-                    ]),
-                    React.createElement('div', {
-                        key: 'galletas-sum',
-                        className: "bg-orange-100 p-4 rounded-lg text-center"
-                    }, [
-                        React.createElement(Cookie, {
-                            key: 'cookie-icon',
-                            className: "mx-auto mb-2 text-orange-600",
-                            size: 24
-                        }),
-                        React.createElement('h3', {
-                            key: 'galletas-title',
-                            className: "font-semibold text-orange-800"
-                        }, "Galletas"),
-                        React.createElement('p', {
-                            key: 'galletas-count',
-                            className: "text-2xl font-bold text-orange-600"
-                        }, totalGalletas)
-                    ]),
-                    React.createElement('div', {
-                        key: 'total-sum',
-                        className: "bg-green-100 p-4 rounded-lg text-center"
-                    }, [
-                        React.createElement(Package, {
-                            key: 'package-icon',
-                            className: "mx-auto mb-2 text-green-600",
-                            size: 24
-                        }),
-                        React.createElement('h3', {
-                            key: 'total-title',
-                            className: "font-semibold text-green-800"
-                        }, "Total"),
-                        React.createElement('p', {
-                            key: 'total-count',
-                            className: "text-2xl font-bold text-green-600"
-                        }, totalProductos)
-                    ])
-                ]),
-
-                // Lists
-                React.createElement('div', {
-                    key: 'lists',
-                    className: "grid md:grid-cols-2 gap-6"
-                }, [
-                    // Bebidas list
-                    React.createElement('div', {
-                        key: 'bebidas-list',
-                        className: "bg-white p-6 rounded-lg shadow-md"
-                    }, [
-                        React.createElement('div', {
-                            key: 'bebidas-header',
-                            className: "flex items-center gap-2 mb-4"
-                        }, [
-                            React.createElement(Coffee, {
-                                key: 'coffee-header',
-                                className: "text-blue-600",
-                                size: 24
-                            }),
-                            React.createElement('h2', {
-                                key: 'bebidas-h2',
-                                className: "text-xl font-bold text-gray-800"
-                            }, "🥤 Bebidas")
-                        ]),
-                        React.createElement('div', {
-                            key: 'bebidas-items',
-                            className: "space-y-3"
-                        }, 
-                            currentData.bebidas.map((item, index) =>
-                                React.createElement('div', {
-                                    key: index,
-                                    className: `flex items-center justify-between p-3 rounded-lg border-2 transition-all duration-200 ${
-                                        isChecked(item.nombre)
-                                            ? 'bg-green-50 border-green-300'
-                                            : 'bg-gray-50 border-gray-200 hover:border-blue-300'
-                                    }`
-                                }, [
-                                    React.createElement('div', {
-                                        key: 'item-left',
-                                        className: "flex items-center gap-3"
-                                    }, [
-                                        React.createElement('button', {
-                                            key: 'checkbox',
-                                            onClick: () => handleCheck(item.nombre),
-                                            className: `w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
-                                                isChecked(item.nombre)
-                                                    ? 'bg-green-500 border-green-500'
-                                                    : 'border-gray-300 hover:border-green-400'
-                                            }`
-                                        }, 
-                                            isChecked(item.nombre) && React.createElement(Check, {
-                                                className: "text-white",
-                                                size: 14
-                                            })
-                                        ),
-                                        React.createElement('span', {
-                                            key: 'item-name',
-                                            className: `font-medium ${
-                                                isChecked(item.nombre) 
-                                                    ? 'text-green-700 line-through' 
-                                                    : 'text-gray-700'
-                                            }`
-                                        }, item.nombre)
-                                    ]),
-                                    React.createElement('span', {
-                                        key: 'item-count',
-                                        className: `px-3 py-1 rounded-full text-sm font-bold ${
-                                            isChecked(item.nombre) 
-                                                ? 'bg-green-200 text-green-800' 
-                                                : 'bg-blue-200 text-blue-800'
-                                        }`
-                                    }, item.cantidad)
-                                ])
-                            )
-                        )
-                    ]),
-
-                    // Galletas list
-                    React.createElement('div', {
-                        key: 'galletas-list',
-                        className: "bg-white p-6 rounded-lg shadow-md"
-                    }, [
-                        React.createElement('div', {
-                            key: 'galletas-header',
-                            className: "flex items-center gap-2 mb-4"
-                        }, [
-                            React.createElement(Cookie, {
-                                key: 'cookie-header',
-                                className: "text-orange-600",
-                                size: 24
-                            }),
-                            React.createElement('h2', {
-                                key: 'galletas-h2',
-                                className: "text-xl font-bold text-gray-800"
-                            }, "🍪 Galletas")
-                        ]),
-                        React.createElement('div', {
-                            key: 'galletas-items',
-                            className: "space-y-3"
-                        }, 
-                            currentData.galletas.map((item, index) =>
-                                React.createElement('div', {
-                                    key: index,
-                                    className: `flex items-center justify-between p-3 rounded-lg border-2 transition-all duration-200 ${
-                                        isChecked(item.nombre)
-                                            ? 'bg-green-50 border-green-300'
-                                            : 'bg-gray-50 border-gray-200 hover:border-orange-300'
-                                    }`
-                                }, [
-                                    React.createElement('div', {
-                                        key: 'item-left',
-                                        className: "flex items-center gap-3"
-                                    }, [
-                                        React.createElement('button', {
-                                            key: 'checkbox',
-                                            onClick: () => handleCheck(item.nombre),
-                                            className: `w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
-                                                isChecked(item.nombre)
-                                                    ? 'bg-green-500 border-green-500'
-                                                    : 'border-gray-300 hover:border-green-400'
-                                            }`
-                                        }, 
-                                            isChecked(item.nombre) && React.createElement(Check, {
-                                                className: "text-white",
-                                                size: 14
-                                            })
-                                        ),
-                                        React.createElement('span', {
-                                            key: 'item-name',
-                                            className: `font-medium ${
-                                                isChecked(item.nombre) 
-                                                    ? 'text-green-700 line-through' 
-                                                    : 'text-gray-700'
-                                            }`
-                                        }, item.nombre)
-                                    ]),
-                                    React.createElement('span', {
-                                        key: 'item-count',
-                                        className: `px-3 py-1 rounded-full text-sm font-bold ${
-                                            isChecked(item.nombre) 
-                                                ? 'bg-green-200 text-green-800' 
-                                                : 'bg-orange-200 text-orange-800'
-                                        }`
-                                    }, item.cantidad)
-                                ])
-                            )
-                        )
-                    ])
-                ]),
-
-                // Reset button
-                React.createElement('div', {
-                    key: 'reset',
-                    className: "text-center mt-6"
-                }, 
-                    React.createElement('button', {
-                        onClick: resetChecklist,
-                        className: "px-6 py-3 bg-red-500 text-white rounded-lg font-medium hover:bg-red-600 transition-colors shadow-lg"
-                    }, "🔄 Resetear Lista")
-                ),
-
-                // Tip
-                React.createElement('div', {
-                    key: 'tip',
-                    className: "mt-6 text-center text-sm text-gray-600 bg-white p-4 rounded-lg"
-                }, [
-                    React.createElement('p', {
-                        key: 'tip-title',
-                        className: "font-medium"
-                    }, "💡 Consejo: Marca cada producto conforme lo vayas empacando"),
-                    React.createElement('p', {
-                        key: 'tip-desc'
-                    }, "Así no se te olvidará nada antes de salir")
-                ])
-            ]);
+    <script>
+        const inventoryData = {
+            'Lunes': {
+                bebidas: [
+                    { nombre: 'Fuze Tea', cantidad: 5 },
+                    { nombre: 'Arizona Kiwi', cantidad: 1 },
+                    { nombre: 'Arizona Mango', cantidad: 1 },
+                    { nombre: 'Arizona Sandía', cantidad: 3 }
+                ],
+                galletas: [
+                    { nombre: 'Cremax', cantidad: 5 },
+                    { nombre: 'Oreo', cantidad: 6 },
+                    { nombre: 'Príncipe', cantidad: 4 },
+                    { nombre: 'Chokis', cantidad: 3 }
+                ]
+            },
+            'Martes': {
+                bebidas: [
+                    { nombre: 'Fuze Tea', cantidad: 5 },
+                    { nombre: 'Arizona Kiwi', cantidad: 1 },
+                    { nombre: 'Arizona Mango', cantidad: 1 },
+                    { nombre: 'Arizona Sandía', cantidad: 3 }
+                ],
+                galletas: [
+                    { nombre: 'Cremax', cantidad: 5 },
+                    { nombre: 'Oreo', cantidad: 6 },
+                    { nombre: 'Príncipe', cantidad: 4 },
+                    { nombre: 'Chokis', cantidad: 3 }
+                ]
+            },
+            'Miércoles': {
+                bebidas: [
+                    { nombre: 'Fuze Tea', cantidad: 5 },
+                    { nombre: 'Arizona Kiwi', cantidad: 1 },
+                    { nombre: 'Arizona Mango', cantidad: 1 },
+                    { nombre: 'Arizona Sandía', cantidad: 2 }
+                ],
+                galletas: [
+                    { nombre: 'Cremax', cantidad: 5 },
+                    { nombre: 'Oreo', cantidad: 6 },
+                    { nombre: 'Príncipe', cantidad: 3 },
+                    { nombre: 'Chokis', cantidad: 2 }
+                ]
+            },
+            'Jueves': {
+                bebidas: [
+                    { nombre: 'Fuze Tea', cantidad: 5 },
+                    { nombre: 'Arizona Kiwi', cantidad: 1 },
+                    { nombre: 'Arizona Mango', cantidad: 2 },
+                    { nombre: 'Arizona Sandía', cantidad: 2 }
+                ],
+                galletas: [
+                    { nombre: 'Cremax', cantidad: 4 },
+                    { nombre: 'Oreo', cantidad: 6 },
+                    { nombre: 'Príncipe', cantidad: 3 },
+                    { nombre: 'Chokis', cantidad: 3 }
+                ]
+            },
+            'Viernes': {
+                bebidas: [
+                    { nombre: 'Fuze Tea', cantidad: 4 },
+                    { nombre: 'Arizona Kiwi', cantidad: 2 },
+                    { nombre: 'Arizona Mango', cantidad: 1 },
+                    { nombre: 'Arizona Sandía', cantidad: 2 }
+                ],
+                galletas: [
+                    { nombre: 'Cremax', cantidad: 5 },
+                    { nombre: 'Oreo', cantidad: 6 },
+                    { nombre: 'Príncipe', cantidad: 4 },
+                    { nombre: 'Chokis', cantidad: 3 }
+                ]
+            }
         };
 
-        ReactDOM.render(React.createElement(InventoryChecklist), document.getElementById('root'));
+        let currentDay = 'Lunes';
+        let checkedItems = {};
+
+        function changeDay(day) {
+            currentDay = day;
+            
+            // Update active button
+            document.querySelectorAll('.day-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            updateDisplay();
+        }
+
+        function toggleItem(itemName) {
+            const key = `${currentDay}-${itemName}`;
+            checkedItems[key] = !checkedItems[key];
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            const data = inventoryData[currentDay];
+            
+            // Update totals
+            const totalBebidas = data.bebidas.reduce((sum, item) => sum + item.cantidad, 0);
+            const totalGalletas = data.galletas.reduce((sum, item) => sum + item.cantidad, 0);
+            const totalProductos = totalBebidas + totalGalletas;
+            
+            document.getElementById('totalBebidas').textContent = totalBebidas;
+            document.getElementById('totalGalletas').textContent = totalGalletas;
+            document.getElementById('totalProductos').textContent = totalProductos;
+            
+            // Update bebidas list
+            const bebidasHtml = data.bebidas.map(item => {
+                const key = `${currentDay}-${item.nombre}`;
+                const isChecked = checkedItems[key] || false;
+                return `
+                    <div class="product-item ${isChecked ? 'checked' : ''}" onclick="toggleItem('${item.nombre}')">
+                        <div class="product-left">
+                            <div class="checkbox">${isChecked ? '✓' : ''}</div>
+                            <span class="product-name">${item.nombre}</span>
+                        </div>
+                        <span class="product-quantity">${item.cantidad}</span>
+                    </div>
+                `;
+            }).join('');
+            
+            document.getElementById('bebidasList').innerHTML = bebidasHtml;
+            
+            // Update galletas list
+            const galletasHtml = data.galletas.map(item => {
+                const key = `${currentDay}-${item.nombre}`;
+                const isChecked = checkedItems[key] || false;
+                return `
+                    <div class="product-item ${isChecked ? 'checked' : ''}" onclick="toggleItem('${item.nombre}')">
+                        <div class="product-left">
+                            <div class="checkbox">${isChecked ? '✓' : ''}</div>
+                            <span class="product-name">${item.nombre}</span>
+                        </div>
+                        <span class="product-quantity">${item.cantidad}</span>
+                    </div>
+                `;
+            }).join('');
+            
+            document.getElementById('galletasList').innerHTML = galletasHtml;
+        }
+
+        function resetChecklist() {
+            checkedItems = {};
+            updateDisplay();
+        }
+
+        // Initialize
+        updateDisplay();
     </script>
 </body>
 </html>
