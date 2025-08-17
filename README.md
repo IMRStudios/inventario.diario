@@ -4,7 +4,7 @@ Mi lista personal para no olvidar qué productos llevar cada día.
 
 ## 🚀 Acceso Rápido
 
-**URL:** https://tu-usuario.github.io/inventario-diario
+**URL:** https://imrstudios.github.io/inventario.diario/
 
 ## 📱 Cómo usar
 
