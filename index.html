@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📦 Lista de Inventario Diario</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+        const { Check, Package, Calendar, Coffee, Cookie } = lucide;
+
+        const InventoryChecklist = () => {
+            const [selectedDay, setSelectedDay] = useState('Lunes');
+            const [checkedItems, setCheckedItems] = useState({});
+
+            const inventoryData = {
+                'Lunes': {
+                    bebidas: [
+                        { nombre: 'Fuze Tea', cantidad: 5 },
+                        { nombre: 'Arizona Kiwi', cantidad: 1 },
+                        { nombre: 'Arizona Mango', cantidad: 1 },
+                        { nombre: 'Arizona Sandía', cantidad: 3 }
+                    ],
+                    galletas: [
+                        { nombre: 'Cremax', cantidad: 5 },
+                        { nombre: 'Oreo', cantidad: 6 },
+                        { nombre: 'Príncipe', cantidad: 4 },
+                        { nombre: 'Chokis', cantidad: 3 }
+                    ]
+                },
+                'Martes': {
+                    bebidas: [
+                        { nombre: 'Fuze Tea', cantidad: 5 },
+                        { nombre: 'Arizona Kiwi', cantidad: 1 },
+                        { nombre: 'Arizona Mango', cantidad: 1 },
+                        { nombre: 'Arizona Sandía', cantidad: 3 }
+                    ],
+                    galletas: [
+                        { nombre: 'Cremax', cantidad: 5 },
+                        { nombre: 'Oreo', cantidad: 6 },
+                        { nombre: 'Príncipe', cantidad: 4 },
+                        { nombre: 'Chokis', cantidad: 3 }
+                    ]
+                },
+                'Miércoles': {
+                    bebidas: [
+                        { nombre: 'Fuze Tea', cantidad: 5 },
+                        { nombre: 'Arizona Kiwi', cantidad: 1 },
+                        { nombre: 'Arizona Mango', cantidad: 1 },
+                        { nombre: 'Arizona Sandía', cantidad: 2 }
+                    ],
+                    galletas: [
+                        { nombre: 'Cremax', cantidad: 5 },
+                        { nombre: 'Oreo', cantidad: 6 },
+                        { nombre: 'Príncipe', cantidad: 3 },
+                        { nombre: 'Chokis', cantidad: 2 }
+                    ]
+                },
+                'Jueves': {
+                    bebidas: [
+                        { nombre: 'Fuze Tea', cantidad: 5 },
+                        { nombre: 'Arizona Kiwi', cantidad: 1 },
+                        { nombre: 'Arizona Mango', cantidad: 2 },
+                        { nombre: 'Arizona Sandía', cantidad: 2 }
+                    ],
+                    galletas: [
+                        { nombre: 'Cremax', cantidad: 4 },
+                        { nombre: 'Oreo', cantidad: 6 },
+                        { nombre: 'Príncipe', cantidad: 3 },
+                        { nombre: 'Chokis', cantidad: 3 }
+                    ]
+                },
+                'Viernes': {
+                    bebidas: [
+                        { nombre: 'Fuze Tea', cantidad: 4 },
+                        { nombre: 'Arizona Kiwi', cantidad: 2 },
+                        { nombre: 'Arizona Mango', cantidad: 1 },
+                        { nombre: 'Arizona Sandía', cantidad: 2 }
+                    ],
+                    galletas: [
+                        { nombre: 'Cremax', cantidad: 5 },
+                        { nombre: 'Oreo', cantidad: 6 },
+                        { nombre: 'Príncipe', cantidad: 4 },
+                        { nombre: 'Chokis', cantidad: 3 }
+                    ]
+                }
+            };
+
+            const handleCheck = (item) => {
+                const key = `${selectedDay}-${item}`;
+                setCheckedItems(prev => ({
+                    ...prev,
+                    [key]: !prev[key]
+                }));
+            };
+
+            const isChecked = (item) => {
+                const key = `${selectedDay}-${item}`;
+                return checkedItems[key] || false;
+            };
+
+            const resetChecklist = () => {
+                setCheckedItems({});
+            };
+
+            const currentData = inventoryData[selectedDay];
+            const totalBebidas = currentData.bebidas.reduce((sum, item) => sum + item.cantidad, 0);
+            const totalGalletas = currentData.galletas.reduce((sum, item) => sum + item.cantidad, 0);
+            const totalProductos = totalBebidas + totalGalletas;
+
+            return React.createElement('div', {
+                className: "max-w-4xl mx-auto p-6 bg-gradient-to-br from-blue-50 to-green-50 rounded-xl shadow-lg min-h-screen"
+            }, [
+                // Header
+                React.createElement('div', {
+                    key: 'header',
+                    className: "text-center mb-6"
+                }, [
+                    React.createElement(Package, {
+                        key: 'icon',
+                        className: "mx-auto mb-3 text-blue-600",
+                        size: 48
+                    }),
+                    React.createElement('h1', {
+                        key: 'title',
+                        className: "text-3xl font-bold text-gray-800 mb-2"
+                    }, "📦 Lista de Inventario Diario"),
+                    React.createElement('p', {
+                        key: 'subtitle',
+                        className: "text-gray-600"
+                    }, "¿Qué debo llevar hoy?")
+                ]),
+
+                // Day selector
+                React.createElement('div', {
+                    key: 'selector',
+                    className: "mb-6"
+                }, 
+                    React.createElement('div', {
+                        className: "flex flex-wrap justify-center gap-2"
+                    }, 
+                        Object.keys(inventoryData).map((dia) =>
+                            React.createElement('button', {
+                                key: dia,
+                                onClick: () => setSelectedDay(dia),
+                                className: `px-4 py-2 rounded-lg font-medium transition-all duration-200 flex items-center gap-2 ${
+                                    selectedDay === dia
+                                        ? 'bg-blue-500 text-white shadow-lg transform scale-105'
+                                        : 'bg-white text-gray-700 hover:bg-blue-100 shadow-md'
+                                }`
+                            }, [
+                                React.createElement(Calendar, { key: 'cal', size: 16 }),
+                                dia
+                            ])
+                        )
+                    )
+                ),
+
+                // Summary
+                React.createElement('div', {
+                    key: 'summary',
+                    className: "grid grid-cols-1 md:grid-cols-3 gap-4 mb-6"
+                }, [
+                    React.createElement('div', {
+                        key: 'bebidas-sum',
+                        className: "bg-blue-100 p-4 rounded-lg text-center"
+                    }, [
+                        React.createElement(Coffee, {
+                            key: 'coffee-icon',
+                            className: "mx-auto mb-2 text-blue-600",
+                            size: 24
+                        }),
+                        React.createElement('h3', {
+                            key: 'bebidas-title',
+                            className: "font-semibold text-blue-800"
+                        }, "Bebidas"),
+                        React.createElement('p', {
+                            key: 'bebidas-count',
+                            className: "text-2xl font-bold text-blue-600"
+                        }, totalBebidas)
+                    ]),
+                    React.createElement('div', {
+                        key: 'galletas-sum',
+                        className: "bg-orange-100 p-4 rounded-lg text-center"
+                    }, [
+                        React.createElement(Cookie, {
+                            key: 'cookie-icon',
+                            className: "mx-auto mb-2 text-orange-600",
+                            size: 24
+                        }),
+                        React.createElement('h3', {
+                            key: 'galletas-title',
+                            className: "font-semibold text-orange-800"
+                        }, "Galletas"),
+                        React.createElement('p', {
+                            key: 'galletas-count',
+                            className: "text-2xl font-bold text-orange-600"
+                        }, totalGalletas)
+                    ]),
+                    React.createElement('div', {
+                        key: 'total-sum',
+                        className: "bg-green-100 p-4 rounded-lg text-center"
+                    }, [
+                        React.createElement(Package, {
+                            key: 'package-icon',
+                            className: "mx-auto mb-2 text-green-600",
+                            size: 24
+                        }),
+                        React.createElement('h3', {
+                            key: 'total-title',
+                            className: "font-semibold text-green-800"
+                        }, "Total"),
+                        React.createElement('p', {
+                            key: 'total-count',
+                            className: "text-2xl font-bold text-green-600"
+                        }, totalProductos)
+                    ])
+                ]),
+
+                // Lists
+                React.createElement('div', {
+                    key: 'lists',
+                    className: "grid md:grid-cols-2 gap-6"
+                }, [
+                    // Bebidas list
+                    React.createElement('div', {
+                        key: 'bebidas-list',
+                        className: "bg-white p-6 rounded-lg shadow-md"
+                    }, [
+                        React.createElement('div', {
+                            key: 'bebidas-header',
+                            className: "flex items-center gap-2 mb-4"
+                        }, [
+                            React.createElement(Coffee, {
+                                key: 'coffee-header',
+                                className: "text-blue-600",
+                                size: 24
+                            }),
+                            React.createElement('h2', {
+                                key: 'bebidas-h2',
+                                className: "text-xl font-bold text-gray-800"
+                            }, "🥤 Bebidas")
+                        ]),
+                        React.createElement('div', {
+                            key: 'bebidas-items',
+                            className: "space-y-3"
+                        }, 
+                            currentData.bebidas.map((item, index) =>
+                                React.createElement('div', {
+                                    key: index,
+                                    className: `flex items-center justify-between p-3 rounded-lg border-2 transition-all duration-200 ${
+                                        isChecked(item.nombre)
+                                            ? 'bg-green-50 border-green-300'
+                                            : 'bg-gray-50 border-gray-200 hover:border-blue-300'
+                                    }`
+                                }, [
+                                    React.createElement('div', {
+                                        key: 'item-left',
+                                        className: "flex items-center gap-3"
+                                    }, [
+                                        React.createElement('button', {
+                                            key: 'checkbox',
+                                            onClick: () => handleCheck(item.nombre),
+                                            className: `w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
+                                                isChecked(item.nombre)
+                                                    ? 'bg-green-500 border-green-500'
+                                                    : 'border-gray-300 hover:border-green-400'
+                                            }`
+                                        }, 
+                                            isChecked(item.nombre) && React.createElement(Check, {
+                                                className: "text-white",
+                                                size: 14
+                                            })
+                                        ),
+                                        React.createElement('span', {
+                                            key: 'item-name',
+                                            className: `font-medium ${
+                                                isChecked(item.nombre) 
+                                                    ? 'text-green-700 line-through' 
+                                                    : 'text-gray-700'
+                                            }`
+                                        }, item.nombre)
+                                    ]),
+                                    React.createElement('span', {
+                                        key: 'item-count',
+                                        className: `px-3 py-1 rounded-full text-sm font-bold ${
+                                            isChecked(item.nombre) 
+                                                ? 'bg-green-200 text-green-800' 
+                                                : 'bg-blue-200 text-blue-800'
+                                        }`
+                                    }, item.cantidad)
+                                ])
+                            )
+                        )
+                    ]),
+
+                    // Galletas list
+                    React.createElement('div', {
+                        key: 'galletas-list',
+                        className: "bg-white p-6 rounded-lg shadow-md"
+                    }, [
+                        React.createElement('div', {
+                            key: 'galletas-header',
+                            className: "flex items-center gap-2 mb-4"
+                        }, [
+                            React.createElement(Cookie, {
+                                key: 'cookie-header',
+                                className: "text-orange-600",
+                                size: 24
+                            }),
+                            React.createElement('h2', {
+                                key: 'galletas-h2',
+                                className: "text-xl font-bold text-gray-800"
+                            }, "🍪 Galletas")
+                        ]),
+                        React.createElement('div', {
+                            key: 'galletas-items',
+                            className: "space-y-3"
+                        }, 
+                            currentData.galletas.map((item, index) =>
+                                React.createElement('div', {
+                                    key: index,
+                                    className: `flex items-center justify-between p-3 rounded-lg border-2 transition-all duration-200 ${
+                                        isChecked(item.nombre)
+                                            ? 'bg-green-50 border-green-300'
+                                            : 'bg-gray-50 border-gray-200 hover:border-orange-300'
+                                    }`
+                                }, [
+                                    React.createElement('div', {
+                                        key: 'item-left',
+                                        className: "flex items-center gap-3"
+                                    }, [
+                                        React.createElement('button', {
+                                            key: 'checkbox',
+                                            onClick: () => handleCheck(item.nombre),
+                                            className: `w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
+                                                isChecked(item.nombre)
+                                                    ? 'bg-green-500 border-green-500'
+                                                    : 'border-gray-300 hover:border-green-400'
+                                            }`
+                                        }, 
+                                            isChecked(item.nombre) && React.createElement(Check, {
+                                                className: "text-white",
+                                                size: 14
+                                            })
+                                        ),
+                                        React.createElement('span', {
+                                            key: 'item-name',
+                                            className: `font-medium ${
+                                                isChecked(item.nombre) 
+                                                    ? 'text-green-700 line-through' 
+                                                    : 'text-gray-700'
+                                            }`
+                                        }, item.nombre)
+                                    ]),
+                                    React.createElement('span', {
+                                        key: 'item-count',
+                                        className: `px-3 py-1 rounded-full text-sm font-bold ${
+                                            isChecked(item.nombre) 
+                                                ? 'bg-green-200 text-green-800' 
+                                                : 'bg-orange-200 text-orange-800'
+                                        }`
+                                    }, item.cantidad)
+                                ])
+                            )
+                        )
+                    ])
+                ]),
+
+                // Reset button
+                React.createElement('div', {
+                    key: 'reset',
+                    className: "text-center mt-6"
+                }, 
+                    React.createElement('button', {
+                        onClick: resetChecklist,
+                        className: "px-6 py-3 bg-red-500 text-white rounded-lg font-medium hover:bg-red-600 transition-colors shadow-lg"
+                    }, "🔄 Resetear Lista")
+                ),
+
+                // Tip
+                React.createElement('div', {
+                    key: 'tip',
+                    className: "mt-6 text-center text-sm text-gray-600 bg-white p-4 rounded-lg"
+                }, [
+                    React.createElement('p', {
+                        key: 'tip-title',
+                        className: "font-medium"
+                    }, "💡 Consejo: Marca cada producto conforme lo vayas empacando"),
+                    React.createElement('p', {
+                        key: 'tip-desc'
+                    }, "Así no se te olvidará nada antes de salir")
+                ])
+            ]);
+        };
+
+        ReactDOM.render(React.createElement(InventoryChecklist), document.getElementById('root'));
+    </script>
+</body>
+</html>
